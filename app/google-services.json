@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "792397635393",
+    "project_id": "closeyourmouth-c2521",
+    "storage_bucket": "closeyourmouth-c2521.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792397635393:android:e03db58b39de12de48cbc0",
+        "android_client_info": {
+          "package_name": "com.agamy.closeyourmouth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCr-f4gMo9epXCZ2sxKlT5bgZ7btfxJBS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
