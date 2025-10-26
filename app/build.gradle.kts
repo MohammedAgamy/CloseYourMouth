@@ -56,8 +56,6 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.auth)
-    implementation(libs.androidx.navigation.compose.jvmstubs)
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,7 +74,10 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-analytics")
+    //coil
+   // implementation("io.coil-kt:coil-compose:3.0.0-rc01")
 
+    implementation("androidx.navigation:navigation-compose:2.8.3")
 
 
 }

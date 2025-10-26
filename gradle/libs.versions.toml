@@ -11,7 +11,6 @@ composeBom = "2024.09.00"
 firebaseFirestore = "26.0.2"
 firebaseStorage = "22.0.1"
 firebaseAuth = "24.0.1"
-navigationComposeJvmstubs = "2.9.5"
 
 
 [libraries]
@@ -32,7 +31,6 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
-androidx-navigation-compose-jvmstubs = { group = "androidx.navigation", name = "navigation-compose-jvmstubs", version.ref = "navigationComposeJvmstubs" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
