@@ -36,14 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
 
-    LaunchedEffect(Unit) {
-            delay(3000)
-            navController.navigate(Routes.LOGIN) {
-                popUpTo(Routes.SPLASH) {
-                    inclusive = true
-                }
-            }
-    }
+
 
     Box(
         modifier = Modifier
@@ -94,7 +87,12 @@ fun SplashScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.SPLASH) {
+                            inclusive = true
+                        }
+                    }                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp),

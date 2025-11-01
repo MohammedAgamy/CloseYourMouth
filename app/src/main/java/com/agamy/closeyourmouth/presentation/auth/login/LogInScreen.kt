@@ -1,7 +1,7 @@
 package com.agamy.closeyourmouth.presentation.auth.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,22 +30,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.agamy.closeyourmouth.R
+import com.agamy.closeyourmouth.presentation.navigation.Routes
 
 @Composable
-fun LogInScreen() {
+fun LogInScreen(navController: NavController) {
     //login screen implementation
     //login with phone number
 
-
+    //head to toe layout
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
@@ -63,6 +70,7 @@ fun LogInScreen() {
         HintText()
         Spacer(modifier = Modifier.size(32.dp))
         InPutPhoneNumber()
+        ContinueButten(navController)
     }
 }
 
@@ -71,6 +79,7 @@ fun HintText() {
 
     Text(
         "Enter Your Phone Number",
+        modifier = Modifier.fillMaxWidth(),
         fontSize = 26.sp,
         fontWeight = Bold,
         color = Color.Black,
@@ -80,6 +89,7 @@ fun HintText() {
     Text(
         "Please confirm your country code and enter\n your phone number",
         fontSize = 16.sp,
+        modifier = Modifier.fillMaxWidth(),
         color = Color.Black,
         textAlign = TextAlign.Center
     )
@@ -102,88 +112,80 @@ fun InPutPhoneNumber() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(20.dp), verticalArrangement = Arrangement.Center
     ) {
 
         Text(
             text = "Enter your phone number",
             fontSize = 20.sp,
-            fontWeight = Bold
+            modifier = Modifier.fillMaxWidth(),
+            fontWeight = Bold,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
+        //for all inPout filed (flag_code cuntry code  phone number)
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = Color.Gray,
-                    shape = RoundedCornerShape(12.dp)
-                )
-                .padding(12.dp)
+                .padding(5.dp)
         ) {
 
-            CountryPicker(
-                selectedCountry = selectedCountry,
-                onCountrySelected = { selectedCountry = it } ,
-                countries = countries
-            )
+            //fow flag and cuntry code
+            //clip to rounded corner tack shape and background color
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp)) // زوايا دائرية
+                    .background(Color(0xFFF7F7FC))   // الخلفية فقط
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CountryPicker(
+                    selectedCountry = selectedCountry,
+                    onCountrySelected = { selectedCountry = it },
+                    countries = countries
+                )
 
-            Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(12.dp))
 
-            Text(
-                text = selectedCountry.code ,
-                fontSize = 18.sp,
-                fontWeight = Bold,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-
+                Text(
+                    text = selectedCountry.code,
+                    fontSize = 18.sp,
+                    color = Color.LightGray
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
             TextField(
                 value = phone,
                 onValueChange = { phone = it },
                 modifier = Modifier.weight(1f),
                 placeholder = {
-                    Text("Phone Number")
+                    Text("Phone Number", color = Color.LightGray)
                 },
                 maxLines = 1,
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent
-                )
+                    unfocusedIndicatorColor = Color(0xFFF7F7FC),
+                    focusedIndicatorColor = Color(0xFFF7F7FC),
+                    unfocusedContainerColor = Color(0xFFF7F7FC),
+                    focusedContainerColor = Color(0xFFF7F7FC),
+
+                    )
             )
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                val fullNumber = selectedCountry.code + phone
-                println("Full Phone: $fullNumber")
-            }
-        ) {
-            Text("Continue")
-        }
     }
+
 
 }
 
 
-data class Country(
-    val name: String,
-    val code: String,        // +20 , +966 , +971 ...
-    val flagRes: Int         // العلم من drawable
-)
-
+// Country Picker Composable
+// لعرض قائمة منسدلة لاختيار الدولة
+//  يعرض العلم ورمز الدولة فقط
 @Composable
 fun CountryPicker(
-    selectedCountry: Country?,
-    onCountrySelected: (Country) -> Unit ,
-    countries: List<Country>
+    selectedCountry: Country?, onCountrySelected: (Country) -> Unit, countries: List<Country>
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -195,32 +197,60 @@ fun CountryPicker(
             contentDescription = null,
             modifier = Modifier
                 .size(40.dp)
-                .clickable { expanded = true }
-        )
+                .clickable { expanded = true })
 
+        // القائمة المنسدلة لاختيار الدولة
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
+            expanded = expanded, onDismissRequest = { expanded = false }) {
             countries.forEach { country ->
-                DropdownMenuItem(
-                    onClick = {
-                        onCountrySelected(country)
-                        expanded = false
-                    },
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(country.flagRes),
-                                contentDescription = null,
-                                modifier = Modifier.size(35.dp)
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(country.code) // يظهر فقط الرمز
-                        }
+                DropdownMenuItem(onClick = {
+                    onCountrySelected(country)
+                    expanded = false
+                }, text = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(country.flagRes),
+                            contentDescription = null,
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(country.code) // يظهر فقط الرمز
                     }
-                )
+                })
             }
         }
     }
 }
+
+
+@Composable
+fun ContinueButten(navController: NavController) {
+    Spacer(modifier = Modifier.height(50.dp))
+
+    Button(
+        onClick = {
+            navController.navigate(Routes.OTP) {
+                popUpTo(Routes.LOGIN) {
+                    inclusive = true
+                }
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(55.dp),
+        colors = ButtonColors(
+            containerColor = Color(0xFF002DE3),
+            contentColor = Color.White,
+            disabledContainerColor = Color(0xFF002DE3),
+            disabledContentColor = Color.White,
+        ),
+        shape = RoundedCornerShape(32.dp)
+    ) {
+        Text("Continue", fontSize = 16.sp)
+    }
+}
+
+
+
+
+

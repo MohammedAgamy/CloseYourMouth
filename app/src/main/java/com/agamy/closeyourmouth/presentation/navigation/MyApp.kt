@@ -5,10 +5,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.agamy.closeyourmouth.presentation.auth.login.LogInScreen
+import com.agamy.closeyourmouth.presentation.auth.login.OtpScreen
 import com.agamy.closeyourmouth.presentation.splash.SplashScreen
 
 @Composable
-fun MyApp (){
+fun MyApp() {
 
     val navController = rememberNavController()
 
@@ -19,7 +20,8 @@ fun MyApp (){
     )
     {
         composable(Routes.SPLASH) { SplashScreen(navController) }
-        composable ( Routes.LOGIN ){ LogInScreen() }
+        composable(Routes.LOGIN) { LogInScreen(navController ) }
+        composable(Routes.OTP) { OtpScreen() }
     }
 }
 
