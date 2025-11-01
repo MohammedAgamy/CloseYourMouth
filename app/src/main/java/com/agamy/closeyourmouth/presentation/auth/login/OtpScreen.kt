@@ -86,6 +86,7 @@ fun OtpScreen() {
 
         Spacer(modifier = Modifier.height(50.dp))
 
+        // Verify Button
         Button(
             onClick = { /* TODO: Verify OTP here */ },
             modifier = Modifier
