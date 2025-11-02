@@ -47,6 +47,8 @@ import androidx.navigation.NavController
 import com.agamy.closeyourmouth.R
 import com.google.firebase.auth.PhoneAuthCredential
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.agamy.closeyourmouth.domain.datastore.UserPreferences
+import com.agamy.closeyourmouth.presentation.navigation.Routes
 
 
 @Composable
@@ -282,6 +284,7 @@ fun ContinueButten(
         )
     }
 
+    val userPrefs = UserPreferences(context)
     when (val currentState = state) {
         is PhoneNumberState.Loading -> {
             CircularProgressIndicator()
@@ -295,7 +298,9 @@ fun ContinueButten(
 
             // ✅ التنقل إلى شاشة OTP وتمرير verificationId
             LaunchedEffect(currentState.verificationId) {
-                navController.navigate("otp/${currentState.verificationId}")
+                navController.navigate(Routes.otp(currentState.verificationId))
+                userPrefs.saveUser(phoneNumber)
+
             }
         }
 
