@@ -1,4 +1,4 @@
-package com.agamy.closeyourmouth.presentation.auth.login
+package com.agamy.closeyourmouth.presentation.auth.login.otp
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -15,12 +15,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,17 +39,25 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.agamy.closeyourmouth.presentation.navigation.Routes
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@Preview
 @Composable
-fun OtpScreen() {
+fun OtpScreen(
+    verificationId: String,
+    viewModel: OtpViewModel = hiltViewModel(),
+    onVerified: () -> Unit ,
+    onScess:() -> Unit,
+) {
+
+    val state by viewModel.state.collectAsState()
     var otpCode by remember { mutableStateOf("") }
 
     Column(
@@ -81,14 +92,18 @@ fun OtpScreen() {
             otpText = otpCode,
             onOtpTextChange = { value, _ ->
                 otpCode = value
-            }
+            },
+            verificationId = verificationId,
+            viewmodel = viewModel
         )
 
         Spacer(modifier = Modifier.height(50.dp))
 
         // Verify Button
         Button(
-            onClick = { /* TODO: Verify OTP here */ },
+            onClick = {
+                viewModel.handleIntent(OtpIntent.VerifyCode(verificationId, otpCode))
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(55.dp),
@@ -100,14 +115,32 @@ fun OtpScreen() {
             Text(text = "Verify", fontSize = 18.sp, color = Color.White)
         }
     }
+
+
+
+
+    when(val currentState = state) {
+        is OtpState.Verified -> {
+            LaunchedEffect(Unit) { onVerified() }
+        }
+        is OtpState.Error -> {
+            Text(currentState.message, color = Color.Red)
+        }
+        else -> {}
+    }
+
 }
+
 
 @Composable
 fun OtpTextField(
     otpText: String,
     onOtpTextChange: (String, Boolean) -> Unit,
-    charCount: Int = 6
-) {
+    charCount: Int = 6,
+    verificationId: String,
+    viewmodel: OtpViewModel,
+
+    ) {
     val context = LocalContext.current
     // Create a list of FocusRequesters for each OTP box
     val focusRequesters = List(charCount) { FocusRequester() }
@@ -124,17 +157,18 @@ fun OtpTextField(
     }
 
     //var otp by remember { mutableStateOf("") }
-
+/*
     LaunchedEffect(otpText) {
         if (otpText.length == charCount) {
             coroutineScope {
                 launch {
-                   // viewModel.verifyOtp(otp)
-                    Toast.makeText(context, otpText , Toast.LENGTH_SHORT).show()
+                    viewmodel.verifyCode(verificationId, otpText)
+                    // viewModel.verifyOtp(otp)
+                    Toast.makeText(context, otpText, Toast.LENGTH_SHORT).show()
                 }
             }
         }
-    }
+    }*/
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically

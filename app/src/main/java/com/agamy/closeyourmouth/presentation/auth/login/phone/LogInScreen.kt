@@ -1,5 +1,6 @@
-package com.agamy.closeyourmouth.presentation.auth.login
+package com.agamy.closeyourmouth.presentation.auth.login.phone
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,13 +18,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,20 +37,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.agamy.closeyourmouth.R
-import com.agamy.closeyourmouth.presentation.navigation.Routes
+import com.google.firebase.auth.PhoneAuthCredential
+import androidx.hilt.navigation.compose.hiltViewModel
+
 
 @Composable
-fun LogInScreen(navController: NavController) {
+fun LogInScreen(
+    viewModel: PhoneNumberViewModel = hiltViewModel(),
+    navController: NavController
+) {
     //login screen implementation
     //login with phone number
+
+    val state by viewModel.state.collectAsState()
+    var phoneNumber by remember { mutableStateOf("") }
+
 
     //head to toe layout
     Column(
@@ -69,8 +83,10 @@ fun LogInScreen(navController: NavController) {
         Spacer(modifier = Modifier.size(48.dp))
         HintText()
         Spacer(modifier = Modifier.size(32.dp))
-        InPutPhoneNumber()
-        ContinueButten(navController)
+        InPutPhoneNumber(
+            phoneNumber = phoneNumber,
+            onPhoneChange = { phoneNumber = it })
+        ContinueButten(navController = navController, phoneNumber, viewModel, state)
     }
 }
 
@@ -99,7 +115,10 @@ fun HintText() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InPutPhoneNumber() {
+fun InPutPhoneNumber(
+    phoneNumber: String,
+    onPhoneChange: (String) -> Unit
+) {
     val countries = listOf(
         Country("Egypt", "+20", R.drawable.egypt),
         Country("Saudi Arabia", "+966", R.drawable.saudiarabia),
@@ -107,7 +126,7 @@ fun InPutPhoneNumber() {
         Country("Kuwait", "+965", R.drawable.kuwait)
     )
     var selectedCountry by remember { mutableStateOf(countries.first()) }
-    var phone by remember { mutableStateOf("") }
+    //var phoneNumber by remember { mutableStateOf(phoneNumber1) }
 
     Column(
         modifier = Modifier
@@ -157,8 +176,8 @@ fun InPutPhoneNumber() {
             }
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
-                value = phone,
-                onValueChange = { phone = it },
+                value = phoneNumber,
+                onValueChange = { onPhoneChange(it) },
                 modifier = Modifier.weight(1f),
                 placeholder = {
                     Text("Phone Number", color = Color.LightGray)
@@ -222,19 +241,28 @@ fun CountryPicker(
     }
 }
 
-
 @Composable
-fun ContinueButten(navController: NavController) {
+fun ContinueButten(
+    navController: NavController,
+    phoneNumber: String,
+    viewModel: PhoneNumberViewModel,
+    state: PhoneNumberState
+) {
     Spacer(modifier = Modifier.height(50.dp))
+    val context = LocalContext.current
 
     Button(
         onClick = {
-            navController.navigate(Routes.OTP) {
-                popUpTo(Routes.LOGIN) {
-                    inclusive = true
-                }
+            if (phoneNumber.isNotBlank()) {
+                viewModel.handleIntent(
+                    PhoneNumberIntent.SendCode(
+                        "+20" + phoneNumber.trim(),
+                        context as Activity
+                    )
+                )
             }
         },
+        enabled = state !is PhoneNumberState.Loading,
         modifier = Modifier
             .fillMaxWidth()
             .height(55.dp),
@@ -246,11 +274,46 @@ fun ContinueButten(navController: NavController) {
         ),
         shape = RoundedCornerShape(32.dp)
     ) {
-        Text("Continue", fontSize = 16.sp)
+        Text(
+            text = if (state is PhoneNumberState.Loading)
+                "Sending..."
+            else
+                "Send OTP"
+        )
+    }
+
+    when (val currentState = state) {
+        is PhoneNumberState.Loading -> {
+            CircularProgressIndicator()
+        }
+
+        is PhoneNumberState.CodeSent -> {
+            Text(
+                text = "Code sent successfully!",
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // ✅ التنقل إلى شاشة OTP وتمرير verificationId
+            LaunchedEffect(currentState.verificationId) {
+                navController.navigate("otp/${currentState.verificationId}")
+            }
+        }
+
+        is PhoneNumberState.SuccessAuto -> {
+            Text(
+                text = "Auto verification success!",
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        is PhoneNumberState.Error -> {
+            Text(
+                text = currentState.message,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+
+        else -> Unit
     }
 }
-
-
-
-
 

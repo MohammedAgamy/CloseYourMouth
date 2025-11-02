@@ -1,5 +1,4 @@
-package com.agamy.closeyourmouth.presentation.auth.login
-
+package com.agamy.closeyourmouth.presentation.auth.login.phone
 
 data class Country(
     val name: String, val code: String,        // +20 , +966 , +971 ...
