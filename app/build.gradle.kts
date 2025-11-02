@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
-    implementation(libs.firebase.auth)
+    implementation(libs.androidx.compose.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,10 +70,16 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.52")
     kapt("com.google.dagger:hilt-compiler:2.52")
     implementation("androidx.activity:activity-compose:1.9.3")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.android.gms:play-services-auth")
+    implementation("com.google.firebase:firebase-auth:24.0.1")
+
+
     //coil
    // implementation("io.coil-kt:coil-compose:3.0.0-rc01")
 

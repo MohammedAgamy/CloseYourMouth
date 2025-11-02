@@ -1,29 +1,29 @@
 package com.agamy.closeyourmouth.di
 
 
+import com.agamy.closeyourmouth.data.remote.AuthRepository
+import com.agamy.closeyourmouth.data.repository.AuthRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
+    // This function tells Hilt how to create (or "provide") a FirebaseAuth instance.
+    @Provides
+    fun provideFirebaseAuth(): FirebaseAuth {
+        // FirebaseAuth.getInstance() is the standard way to get the singleton Firebase Auth object.
+        return FirebaseAuth.getInstance()
+    }
 
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
-
-    @Provides
-    @Singleton
-    fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
-
-    @Provides
-    @Singleton
-    fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+    fun provideAuthRepository(auth: FirebaseAuth): AuthRepository {
+        return AuthRepositoryImpl(auth)
+    }
 }
