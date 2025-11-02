@@ -34,7 +34,12 @@ fun MyApp() {
             OtpScreen(
                 verificationId = verificationId,
                 onScess = { navController.popBackStack(Routes.LOGIN, inclusive = true) },
-                onVerified = { navController.navigate(Routes.Home) }
+                onVerified = { navController.navigate(Routes.Home)
+                {
+                    //clear back stack
+                    popUpTo(0)
+                }
+                }
             )
         }
         composable(Routes.Home) { HomeContiner() }
