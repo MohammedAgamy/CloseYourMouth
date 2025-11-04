@@ -9,7 +9,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
+// FirebaseModule is a Dagger Hilt module that provides Firebase-related dependencies.
 @Module
 @InstallIn(SingletonComponent::class)
 object FirebaseModule {
@@ -20,7 +20,7 @@ object FirebaseModule {
         return FirebaseAuth.getInstance()
     }
 
-
+    // This function tells Hilt how to create (or "provide") an AuthRepository instance.
     @Provides
     @Singleton
     fun provideAuthRepository(auth: FirebaseAuth): AuthRepository {
