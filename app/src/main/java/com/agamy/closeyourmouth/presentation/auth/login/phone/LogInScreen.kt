@@ -50,7 +50,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.agamy.closeyourmouth.domain.datastore.UserPreferences
 import com.agamy.closeyourmouth.presentation.navigation.Routes
 
-
+// screen to login phone number
+// send code to phone number
+// then navigate to otp screen
 @Composable
 fun LogInScreen(
     viewModel: PhoneNumberViewModel = hiltViewModel(),
@@ -59,11 +61,13 @@ fun LogInScreen(
     //login screen implementation
     //login with phone number
 
+    //collect state from view model
     val state by viewModel.state.collectAsState()
+    // phone number state
     var phoneNumber by remember { mutableStateOf("") }
 
 
-    //head to toe layout
+    // main column
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,6 +76,7 @@ fun LogInScreen(
     ) {
 
         Spacer(modifier = Modifier.size(38.dp))
+        // back arrow image
         Image(
             painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
             contentDescription = "Back Arrow",
@@ -83,11 +88,22 @@ fun LogInScreen(
         )
 
         Spacer(modifier = Modifier.size(48.dp))
+        // hint text
+        // enter your phone number
         HintText()
         Spacer(modifier = Modifier.size(32.dp))
+        // input phone number
+        // country code picker + phone number text field
+        // onPhoneChange updates phoneNumber state
+        // pass phoneNumber to ContinueButton
         InPutPhoneNumber(
             phoneNumber = phoneNumber,
             onPhoneChange = { phoneNumber = it })
+        // continue button
+        // on click send code to phone number
+        // if state is loading disable button
+        // on success navigate to otp screen
+        // pass navController to navigate
         ContinueButten(navController = navController, phoneNumber, viewModel, state)
     }
 }
@@ -121,12 +137,18 @@ fun InPutPhoneNumber(
     phoneNumber: String,
     onPhoneChange: (String) -> Unit
 ) {
+    // List of countries for the country picker
+    // Each country has a name, code, and flag resource.
+    // This list is used to populate the dropdown menu
+    // for selecting a country.
     val countries = listOf(
         Country("Egypt", "+20", R.drawable.egypt),
         Country("Saudi Arabia", "+966", R.drawable.saudiarabia),
         Country("UAE", "+971", R.drawable.unitedarabemirates),
         Country("Kuwait", "+965", R.drawable.kuwait)
     )
+    // State to hold the selected country
+    // Initially set to the first country in the list
     var selectedCountry by remember { mutableStateOf(countries.first()) }
     //var phoneNumber by remember { mutableStateOf(phoneNumber1) }
 
@@ -162,6 +184,11 @@ fun InPutPhoneNumber(
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Country Picker Composable
+                // to select country
+                // shows flag and country code only
+                // عند اختيار دولة، يتم تحديث selectedCountry
+                // ويتم عرض رمز الدولة بجانب حقل رقم الهاتف
                 CountryPicker(
                     selectedCountry = selectedCountry,
                     onCountrySelected = { selectedCountry = it },
@@ -208,6 +235,8 @@ fun InPutPhoneNumber(
 fun CountryPicker(
     selectedCountry: Country?, onCountrySelected: (Country) -> Unit, countries: List<Country>
 ) {
+    // State to manage the expanded/collapsed state of the dropdown menu
+
     var expanded by remember { mutableStateOf(false) }
 
     Box {
@@ -243,6 +272,7 @@ fun CountryPicker(
     }
 }
 
+
 @Composable
 fun ContinueButten(
     navController: NavController,
@@ -253,9 +283,23 @@ fun ContinueButten(
     Spacer(modifier = Modifier.height(50.dp))
     val context = LocalContext.current
 
+    // Continue Button to send OTP
+    // on click, triggers SendCode intent in ViewModel
+    // if phone number is not blank
+    // button is disabled if state is Loading
+    // on success, navigates to OTP screen with verificationId
+
     Button(
         onClick = {
             if (phoneNumber.isNotBlank()) {
+                // Trigger the SendCode intent in the ViewModel
+                // with the full phone number and activity context
+                // The phone number is prefixed with the country code "+20" for Egypt.
+                // This initiates the process of sending an OTP to the specified phone number.
+                // Ensure that the phone number is trimmed of any leading or trailing whitespace.
+                // The context is cast to Activity as required by the SendCode intent.
+                // This action will update the state in the ViewModel,
+                // which will be observed to handle navigation and UI updates.
                 viewModel.handleIntent(
                     PhoneNumberIntent.SendCode(
                         "+20" + phoneNumber.trim(),
