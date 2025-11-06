@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.agamy.closeyourmouth.presentation.auth.login.phone.LogInScreen
 import com.agamy.closeyourmouth.presentation.auth.login.otp.OtpScreen
-import com.agamy.closeyourmouth.presentation.home.HomeContiner
+import com.agamy.closeyourmouth.presentation.home.HomeContainer
 import com.agamy.closeyourmouth.presentation.splash.SplashScreen
 
 @Composable
@@ -55,15 +55,16 @@ fun MyApp() {
             OtpScreen(
                 verificationId = verificationId,
                 onScess = { navController.popBackStack(Routes.LOGIN, inclusive = true) },
-                onVerified = { navController.navigate(Routes.Home)
-                {
-                    //clear back stack
-                    popUpTo(0)
-                }
+                onVerified = {
+                    navController.navigate(Routes.HomeContainer)
+                    {
+                        //clear back stack
+                        popUpTo(0)
+                    }
                 }
             )
         }
-        composable(Routes.Home) { HomeContiner() }
+        composable(Routes.HomeContainer) { HomeContainer() }
     }
 
 }
