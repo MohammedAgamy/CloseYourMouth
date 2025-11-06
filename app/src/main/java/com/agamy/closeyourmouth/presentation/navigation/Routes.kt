@@ -8,6 +8,10 @@ object Routes {
     fun otp(verificationId: String) = "otp/$verificationId"
     const val HomeContainer = "homecontainer"
     const val Contacts = "contacts"
-    const val CHAT = "chat"
+    const val CHAT = "chat/{chatId}/{receiverId}/{receiverName}"
     const val MORE = "more"
+
+
+
 }
+

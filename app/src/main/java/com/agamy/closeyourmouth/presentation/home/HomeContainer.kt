@@ -15,8 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.agamy.closeyourmouth.presentation.home.chat.ChatScreen
+import com.agamy.closeyourmouth.presentation.home.homechat.ChatScreen
 import com.agamy.closeyourmouth.presentation.home.contatcs.ContactsScreen
 import com.agamy.closeyourmouth.presentation.home.more.MoreScreen
 import com.agamy.closeyourmouth.presentation.navigation.Routes
