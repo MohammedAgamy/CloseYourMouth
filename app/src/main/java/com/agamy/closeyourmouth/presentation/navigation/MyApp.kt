@@ -9,7 +9,9 @@ import androidx.navigation.navArgument
 import com.agamy.closeyourmouth.presentation.auth.login.phone.LogInScreen
 import com.agamy.closeyourmouth.presentation.auth.login.otp.OtpScreen
 import com.agamy.closeyourmouth.presentation.home.HomeContainer
+import com.agamy.closeyourmouth.presentation.home.homechat.chat.ChatScreen
 import com.agamy.closeyourmouth.presentation.splash.SplashScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun MyApp() {
@@ -64,7 +66,26 @@ fun MyApp() {
                 }
             )
         }
-        composable(Routes.HomeContainer) { HomeContainer() }
+        composable(Routes.HomeContainer) { HomeContainer(navController = navController) }
+        composable(
+            route = "chat/{chatId}/{receiverId}/{receiverName}",
+            arguments = listOf(
+                navArgument("chatId") { type = NavType.StringType },
+                navArgument("receiverId") { type = NavType.StringType },
+                navArgument("receiverName") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+            val receiverId = backStackEntry.arguments?.getString("receiverId") ?: ""
+            val receiverName = backStackEntry.arguments?.getString("receiverName") ?: ""
+            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
+            ChatScreen(
+                chatId = chatId,
+                senderId = currentUserId.toString(),
+                receiverId = receiverId
+            )
+}
     }
 
 }

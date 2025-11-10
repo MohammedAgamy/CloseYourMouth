@@ -6,7 +6,8 @@ import com.google.firebase.auth.PhoneAuthProvider
 import javax.inject.Inject
 
 class SendOtpUseCase @Inject constructor(
-    private val repository: AuthRepository
+    private val repository: AuthRepository,
+
 ) {
 // Invokes the use case to send a verification code to the specified phone number.
     // Parameters:

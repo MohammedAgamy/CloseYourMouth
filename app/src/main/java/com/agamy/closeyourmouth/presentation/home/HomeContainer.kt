@@ -15,14 +15,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.agamy.closeyourmouth.presentation.home.homechat.ChatScreen
+import androidx.navigation.NavController
 import com.agamy.closeyourmouth.presentation.home.contatcs.ContactsScreen
+import com.agamy.closeyourmouth.presentation.home.homechat.HomeScreen
 import com.agamy.closeyourmouth.presentation.home.more.MoreScreen
 import com.agamy.closeyourmouth.presentation.navigation.Routes
 import com.agamy.closeyourmouth.presentation.navigation.bottomNavItems
 
 @Composable
-fun HomeContainer() {
+fun HomeContainer(navController: NavController) {
 
 
     var selectedTab by remember { mutableStateOf(Routes.Contacts) }
@@ -66,8 +67,8 @@ fun HomeContainer() {
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
-                Routes.Contacts -> ContactsScreen()
-                Routes.CHAT -> ChatScreen()
+                Routes.Contacts -> ContactsScreen(navController = navController)
+                Routes.HomeScreen -> HomeScreen(navController = navController)
                 Routes.MORE -> MoreScreen()
 
                 else -> {}

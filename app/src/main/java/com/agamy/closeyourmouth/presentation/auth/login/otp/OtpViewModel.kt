@@ -2,7 +2,9 @@ package com.agamy.closeyourmouth.presentation.auth.login.otp
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.agamy.closeyourmouth.data.model.SaveUser
 import com.agamy.closeyourmouth.data.remote.AuthRepository
+import com.agamy.closeyourmouth.domain.usecase.SaveUserUseCase
 import com.agamy.closeyourmouth.domain.usecase.VerifyOtpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OtpViewModel @Inject constructor(
-    private val verifyOtpUseCase: VerifyOtpUseCase
+    private val verifyOtpUseCase: VerifyOtpUseCase,
+    private val saveUserUseCase: SaveUserUseCase
+
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<OtpState>(OtpState.Idle)
@@ -29,11 +33,34 @@ class OtpViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val user = verifyOtpUseCase(verificationId, code)
-                if (user != null) _state.value = OtpState.Verified
-                else _state.value = OtpState.Error("Verification failed")
+                if (user != null) {
+                    // هنا نستخدم registerUser لحفظ البيانات في Firestore
+                    registerUser(
+                        userId = user.uid,
+                        phone = user.phoneNumber ?: "",
+                        name = user.displayName ?: "Unknown"
+                    )
+                    _state.value = OtpState.Verified
+                } else {
+                    _state.value = OtpState.Error("Verification failed")
+                }
             } catch (e: Exception) {
                 _state.value = OtpState.Error(e.message ?: "Error")
             }
         }
+        }
+
+
+    fun registerUser(userId: String, phone: String, name: String) {
+        viewModelScope.launch {
+            val user = SaveUser(
+                userId = userId,
+                phone = phone,
+                name = name
+            )
+            saveUserUseCase(user)
+        }
     }
-}
+    }
+
+
