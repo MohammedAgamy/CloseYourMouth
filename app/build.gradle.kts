@@ -82,7 +82,7 @@ dependencies {
 
 
     //coil
-   // implementation("io.coil-kt:coil-compose:3.0.0-rc01")
+    //implementation("io.coil-kt.coil3:coil-compose:3.3.0")
 
     //navigation
     implementation("androidx.navigation:navigation-compose:2.8.3")

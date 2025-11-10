@@ -11,7 +11,7 @@ data class Destination(
 
 val bottomNavItems = listOf(
     Destination(Routes.Contacts, icon = R.drawable.adduser, "Contacts"),
-    Destination(Routes.CHAT, icon = R.drawable.chat, "Chat"),
+    Destination(Routes.HomeScreen, icon = R.drawable.chat, "Chat"),
     Destination(Routes.MORE, icon = R.drawable.more, "More"),
 
 )
